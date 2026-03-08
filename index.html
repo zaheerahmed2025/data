@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TubeIntel — YouTube Channel Intelligence</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ===== API KEY MODAL ===== -->
+<div id="setupModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-icon">🔑</div>
+    <h2>Enter Your YouTube API Key</h2>
+    <p>Your key is stored only in your browser — never sent to any server.</p>
+    <input type="text" id="apiKeyInput" class="modal-input" placeholder="AIza... (YouTube Data API v3 Key)"
+      onkeydown="if(event.key==='Enter') saveApiKey()">
+    <button class="btn-primary" onclick="saveApiKey()">Connect →</button>
+    <a href="#" onclick="showGuide()" class="modal-link">How to get a free API key? →</a>
+  </div>
+</div>
+
+<!-- ===== API GUIDE MODAL ===== -->
+<div id="guideModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:560px">
+    <h2>📋 Get Your Free YouTube API Key</h2>
+    <div class="steps-list">
+      <div class="step-item"><div class="step-num">1</div><div class="step-text"><strong>Open Google Console:</strong><br><a href="https://console.cloud.google.com" target="_blank" class="ext-link">console.cloud.google.com</a></div></div>
+      <div class="step-item"><div class="step-num">2</div><div class="step-text"><strong>Create New Project:</strong><br>"Select Project" → "New Project" → Name it "TubeIntel" → Create</div></div>
+      <div class="step-item"><div class="step-num">3</div><div class="step-text"><strong>Enable YouTube API:</strong><br>"APIs & Services" → "Library" → Search "YouTube Data API v3" → Enable</div></div>
+      <div class="step-item"><div class="step-num">4</div><div class="step-text"><strong>Create API Key:</strong><br>"APIs & Services" → "Credentials" → "Create Credentials" → "API Key"</div></div>
+      <div class="step-item"><div class="step-num">5</div><div class="step-text"><strong>Copy & Paste:</strong><br>Copy the key starting with "AIza..." and paste it here.</div></div>
+    </div>
+    <div class="guide-note">💡 Free quota: <strong>10,000 units/day</strong> — about 200 channel analyses per day. Completely free!</div>
+    <button class="btn-primary" onclick="closeGuide()">← Go Back</button>
+  </div>
+</div>
+
+<!-- ===== VIDEO IDEA MODAL ===== -->
+<div id="ideaModal" class="modal-overlay" style="display:none">
+  <div class="modal-box" style="max-width:700px;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="margin:0">🎬 Video Idea Details</h2>
+      <button onclick="closeIdeaModal()" style="background:var(--surface2);border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:6px 12px;border-radius:8px">✕</button>
+    </div>
+    <div id="ideaModalContent"></div>
+  </div>
+</div>
+
+<!-- ===== HEADER ===== -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-mark">📡</div>
+      <div>
+        <div class="logo-name">TubeIntel</div>
+        <div class="logo-sub">YouTube Channel Intelligence</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="apiStatus" class="api-badge api-ok" style="display:none">✓ API Connected</div>
+      <button class="btn-ghost" onclick="changeKey()">⚙ API Key</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== NAV ===== -->
+<nav class="main-nav">
+  <button class="nav-tab active" onclick="showPage('search')" data-page="search">🔍 Search Channel</button>
+  <button class="nav-tab" onclick="showPage('channel')" data-page="channel" id="navChannel" style="display:none">📊 Channel Detail</button>
+  <button class="nav-tab" onclick="showPage('compare')" data-page="compare">⚔️ Compare</button>
+  <button class="nav-tab" onclick="showPage('mychannel')" data-page="mychannel">🚀 My Channel</button>
+  <button class="nav-tab" onclick="showPage('seo')" data-page="seo">✍️ SEO Optimizer</button>
+  <button class="nav-tab" onclick="showPage('saved')" data-page="saved">💾 Saved Data</button>
+</nav>
+
+<!-- ========================================
+     PAGE: SEARCH
+     ======================================== -->
+<div id="page-search" class="page active">
+  <div class="container">
+    <div class="hero">
+      <h1>Analyze Any YouTube Channel<br><span class="gradient-text">With Real Data</span></h1>
+      <p class="hero-sub">Real-time YouTube API data — subscribers, views, top videos, growth patterns, competitor gaps</p>
+    </div>
+    <div class="search-card">
+      <div class="search-row">
+        <input type="text" id="searchInput" class="search-input" placeholder="Enter channel name (e.g. Cocomelon, MrBeast, Super Simple Songs...)">
+        <button class="btn-primary" onclick="searchChannels()" id="searchBtn">Search →</button>
+      </div>
+      <div class="quick-picks">
+        <span class="quick-label">Quick search:</span>
+        <button class="qbtn" onclick="quickSearch('Cocomelon')">Cocomelon</button>
+        <button class="qbtn" onclick="quickSearch('Super Simple Songs')">Super Simple Songs</button>
+        <button class="qbtn" onclick="quickSearch('Gracie Corner')">Gracie's Corner</button>
+        <button class="qbtn" onclick="quickSearch('BabaSharo TV')">BabaSharo TV</button>
+        <button class="qbtn" onclick="quickSearch('Ms Rachel Songs')">Ms. Rachel</button>
+        <button class="qbtn" onclick="quickSearch('Pinkfong')">Pinkfong</button>
+      </div>
+    </div>
+    <div id="searchLoading" class="loading-state" style="display:none"><div class="spinner"></div><p>Searching YouTube...</p></div>
+    <div id="searchError" class="error-box" style="display:none"></div>
+    <div id="searchResults" class="results-grid"></div>
+  </div>
+</div>
+
+<!-- ========================================
+     PAGE: CHANNEL DETAIL
+     ======================================== -->
+<div id="page-channel" class="page">
+  <div class="container">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+      <button class="back-btn" onclick="showPage('search')">← Back</button>
+      <button class="btn-secondary" onclick="saveCurrentChannel()" id="saveChannelBtn">💾 Save Channel</button>
+    </div>
+    <div id="channelHeader" class="channel-hero"></div>
+    <div id="statsRow" class="stats-row"></div>
+    <div class="inner-tabs">
+      <button class="itab active" onclick="showInnerTab('videos')">📹 Videos</button>
+      <button class="itab" onclick="showInnerTab('insights')">💡 Insights</button>
+      <button class="itab" onclick="showInnerTab('ideas')">🎬 Video Ideas</button>
+      <button class="itab" onclick="showInnerTab('growth')">📈 Growth Tips</button>
+    </div>
+    <div id="itab-videos" class="inner-panel active">
+      <div id="videoLoading" class="loading-state" style="display:none"><div class="spinner"></div><p>Loading videos...</p></div>
+      <div id="videoGrid" class="video-grid"></div>
+    </div>
+    <div id="itab-insights" class="inner-panel">
+      <div id="insightsPanel" class="insights-content"></div>
+    </div>
+    <div id="itab-ideas" class="inner-panel">
+      <div id="ideasPanel" class="ideas-grid"></div>
+    </div>
+    <div id="itab-growth" class="inner-panel">
+      <div id="growthPanel" class="growth-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     PAGE: COMPARE
+     ======================================== -->
+<div id="page-compare" class="page">
+  <div class="container">
+    <div class="page-title">⚔️ <span class="gradient-text">Compare Two Channels</span></div>
+    <p style="color:var(--muted);margin-bottom:28px;font-size:14px">Side-by-side real data comparison — find who is winning and why</p>
+    <div class="compare-inputs">
+      <div class="compare-search-box">
+        <label>Channel 1</label>
+        <div class="search-row">
+          <input type="text" class="search-input" id="cmpInput1" placeholder="Channel name...">
+          <button class="btn-secondary" onclick="searchForCompare(1)">Find</button>
+        </div>
+        <div id="cmpResult1" class="cmp-mini-result"></div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="compare-search-box">
+        <label>Channel 2</label>
+        <div class="search-row">
+          <input type="text" class="search-input" id="cmpInput2" placeholder="Channel name...">
+          <button class="btn-secondary" onclick="searchForCompare(2)">Find</button>
+        </div>
+        <div id="cmpResult2" class="cmp-mini-result"></div>
+      </div>
+    </div>
+    <button class="btn-primary" id="compareBtn" onclick="runCompare()" style="width:100%;justify-content:center;margin-top:20px" disabled>⚔️ Compare Now</button>
+    <div id="compareLoading" class="loading-state" style="display:none"><div class="spinner"></div><p>Fetching data for both channels...</p></div>
+    <div id="compareResults"></div>
+  </div>
+</div>
+
+<!-- ========================================
+     PAGE: MY CHANNEL
+     ======================================== -->
+<div id="page-mychannel" class="page">
+  <div class="container">
+    <div class="wow-hero">
+      <div class="wow-badge">🚀 My Channel Dashboard</div>
+      <h2>Your Channel — <span class="gradient-text">Full Analysis & Growth Plan</span></h2>
+      <p>Enter your channel URL or name to get real data, next video suggestions, and a personalized action plan</p>
+    </div>
+
+    <div id="mySetup">
+      <div class="search-card">
+        <label class="field-label">Your YouTube Channel URL or Name</label>
+        <div class="search-row">
+          <input type="text" class="search-input" id="myChannelInput"
+            placeholder="e.g. youtube.com/@YourChannel or just 'Channel Name'"
+            onkeydown="if(event.key==='Enter') loadMyChannel()">
+          <button class="btn-primary" onclick="loadMyChannel()">Analyze My Channel</button>
+        </div>
+        <div class="quick-picks" style="margin-top:12px">
+          <span class="quick-label">Saved channels:</span>
+          <div id="savedChannelBtns" style="display:inline-flex;gap:8px;flex-wrap:wrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="myDash" style="display:none">
+      <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center">
+        <button class="back-btn" onclick="resetMyChannel()">← Change Channel</button>
+        <button class="btn-secondary" onclick="saveMyChannel()" style="font-size:13px">💾 Save This Channel</button>
+        <button class="btn-secondary" onclick="refreshMyChannel()" style="font-size:13px">🔄 Refresh Data</button>
+      </div>
+      <div id="myChannelHero" class="channel-hero" style="margin-bottom:20px"></div>
+      <div id="myStatsRow" class="stats-row"></div>
+      <div class="inner-tabs" style="margin-top:24px">
+        <button class="itab active" onclick="showMyTab('videos')">📹 My Videos</button>
+        <button class="itab" onclick="showMyTab('nextideas')">🎬 Next Video Ideas</button>
+        <button class="itab" onclick="showMyTab('action')">✅ Action Plan</button>
+        <button class="itab" onclick="showMyTab('seotools')">✍️ SEO Tools</button>
+      </div>
+      <div id="mytab-videos" class="inner-panel active">
+        <div id="myVideoGrid" class="video-grid"></div>
+      </div>
+      <div id="mytab-nextideas" class="inner-panel">
+        <div id="myNextIdeas"></div>
+      </div>
+      <div id="mytab-action" class="inner-panel">
+        <div id="myActionPlan" class="action-plan"></div>
+      </div>
+      <div id="mytab-seotools" class="inner-panel">
+        <div id="mySeoTools"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================
+     PAGE: SEO OPTIMIZER
+     ======================================== -->
+<div id="page-seo" class="page">
+  <div class="container">
+    <div class="page-title">✍️ <span class="gradient-text">SEO Optimizer</span></div>
+    <p style="color:var(--muted);margin-bottom:28px;font-size:14px">Enter your video topic → get optimized title, description & tags based on what's actually trending on YouTube</p>
+
+    <div class="search-card">
+      <label class="field-label">Your Video Topic</label>
+      <div class="search-row" style="margin-bottom:14px">
+        <input type="text" class="search-input" id="seoTopicInput" placeholder="e.g. Body Parts Song for Kids, Animal Sounds, Colors for Toddlers...">
+        <button class="btn-primary" onclick="runSeoOptimizer()" id="seoBtn">Generate →</button>
+      </div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <label class="field-label" style="margin-bottom:6px">Channel Niche</label>
+          <select id="seoNiche" class="search-input" style="cursor:pointer">
+            <option value="kids education">Kids Education</option>
+            <option value="nursery rhymes">Nursery Rhymes</option>
+            <option value="kids songs">Kids Songs & Music</option>
+            <option value="toddler learning">Toddler Learning</option>
+            <option value="kids animation">Kids Animation</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <label class="field-label" style="margin-bottom:6px">Your Draft Title (optional)</label>
+          <input type="text" class="search-input" id="seoDraftTitle" placeholder="Your current title idea...">
+        </div>
+      </div>
+    </div>
+
+    <div id="seoLoading" class="loading-state" style="display:none"><div class="spinner"></div><p>Fetching trending data & generating optimized content...</p></div>
+    <div id="seoResults"></div>
+
+    <!-- Saved SEO History -->
+    <div id="seoHistory" style="margin-top:32px"></div>
+  </div>
+</div>
+
+<!-- ========================================
+     PAGE: SAVED DATA
+     ======================================== -->
+<div id="page-saved" class="page">
+  <div class="container">
+    <div class="page-title">💾 <span class="gradient-text">Saved Data & Intelligence</span></div>
+    <p style="color:var(--muted);margin-bottom:24px;font-size:14px">All your analyzed channels, SEO results, and insights — saved in your browser</p>
+
+    <div class="inner-tabs" style="margin-bottom:20px">
+      <button class="itab active" onclick="showSavedTab('channels')">📊 Saved Channels</button>
+      <button class="itab" onclick="showSavedTab('seohistory')">✍️ SEO History</button>
+      <button class="itab" onclick="showSavedTab('notes')">📝 My Notes</button>
+    </div>
+    <div id="savedtab-channels" class="inner-panel active"><div id="savedChannelsList"></div></div>
+    <div id="savedtab-seohistory" class="inner-panel"><div id="savedSeoList"></div></div>
+    <div id="savedtab-notes" class="inner-panel">
+      <div class="search-card">
+        <label class="field-label">Add a Note</label>
+        <textarea id="noteInput" class="search-input" style="min-height:80px;resize:vertical" placeholder="Write your strategy notes, video ideas, observations..."></textarea>
+        <button class="btn-primary" onclick="saveNote()" style="margin-top:10px">Save Note</button>
+      </div>
+      <div id="notesList" style="margin-top:16px"></div>
+    </div>
+
+    <div style="margin-top:32px;padding:16px;background:rgba(239,71,111,0.06);border:1px solid rgba(239,71,111,0.15);border-radius:12px">
+      <button onclick="clearAllData()" style="background:rgba(239,71,111,0.15);border:1px solid rgba(239,71,111,0.3);color:var(--red);padding:8px 20px;border-radius:8px;cursor:pointer;font-size:13px">🗑️ Clear All Saved Data</button>
+      <span style="font-size:12px;color:var(--muted);margin-left:12px">This will delete all saved channels, SEO history, and notes</span>
+    </div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
