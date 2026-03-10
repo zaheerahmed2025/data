@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RankIQ — YouTube Intelligence Platform</title>
+<meta name="description" content="Free YouTube SEO, keyword research, channel analysis, and ranking tools. Like VidIQ and TubeBuddy — but completely free.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800;900&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+<!-- ═══════════ SETUP MODAL ═══════════ -->
+<div id="setup-modal">
+  <div class="sm-box">
+    <div class="sm-logo">📡</div>
+    <div class="sm-title">Welcome to <span style="background:linear-gradient(135deg,#7C5CFC,#FF4D9E);-webkit-background-clip:text;-webkit-text-fill-color:transparent">RankIQ</span></div>
+    <div class="sm-sub">The free YouTube intelligence platform. Analyze channels, research keywords, optimize SEO — powered by the official YouTube API.</div>
+    <input type="password" id="setup-key-input" class="sm-input" placeholder="Enter your YouTube Data API v3 key (AIza...)">
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="setupSaveKey()">Connect & Start →</button>
+    <div class="sm-features">
+      <div class="sm-feat">100% Free forever</div>
+      <div class="sm-feat">Real YouTube data</div>
+      <div class="sm-feat">No account needed</div>
+      <div class="sm-feat">Your data stays local</div>
+      <div class="sm-feat">10,000 API units/day</div>
+      <div class="sm-feat">Works offline (cached)</div>
+    </div>
+    <a class="sm-guide-link" onclick="$('setup-modal').classList.remove('visible');$('api-guide').classList.add('visible')">
+      🔑 How to get a free YouTube API key (5 minutes) →
+    </a>
+  </div>
+</div>
+
+<!-- ═══════════ API GUIDE ═══════════ -->
+<div id="api-guide">
+  <div class="ag-box">
+    <h2>🔑 Get Your Free YouTube API Key</h2>
+    <div class="steps-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">
+          <strong>Open Google Cloud Console:</strong><br>
+          Go to <a href="https://console.cloud.google.com" target="_blank">console.cloud.google.com</a> — sign in with your Google account
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">
+          <strong>Create a New Project:</strong><br>
+          Click "Select Project" at the top → "New Project" → Name it "RankIQ" → Click Create
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">
+          <strong>Enable YouTube Data API v3:</strong><br>
+          Left menu → "APIs & Services" → "Library" → Search "YouTube Data API v3" → Click Enable
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">
+          <strong>Create API Key:</strong><br>
+          Left menu → "APIs & Services" → "Credentials" → "Create Credentials" → "API Key"
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-text">
+          <strong>Copy & Paste:</strong><br>
+          Copy the key that starts with "AIza..." and paste it in the RankIQ setup screen
+        </div>
+      </div>
+    </div>
+    <div class="guide-note">
+      💡 <strong>Free quota:</strong> 10,000 units/day — about 50-100 full channel analyses per day. Completely free, no billing required for this level.
+    </div>
+    <button class="btn-primary" style="width:100%;justify-content:center" onclick="$('api-guide').classList.remove('visible');$('setup-modal').classList.add('visible')">
+      ← Back to Setup
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside id="sidebar">
+  <div class="sidebar-logo">
+    <div class="sl-icon">📡</div>
+    <div>
+      <div class="sl-name">Rank<span>IQ</span></div>
+      <div class="sl-tag">YouTube Intelligence</div>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section">Overview</div>
+    <button class="nav-link" data-page="dashboard" onclick="Router.go('dashboard')">
+      <span class="nav-icon">🏠</span> Dashboard
+    </button>
+
+    <div class="nav-section">Research Tools</div>
+    <button class="nav-link" data-page="channel" onclick="Router.go('channel')">
+      <span class="nav-icon">📊</span> Channel Analyzer
+    </button>
+    <button class="nav-link" data-page="keywords" onclick="Router.go('keywords')">
+      <span class="nav-icon">🔍</span> Keyword Research
+    </button>
+    <button class="nav-link" data-page="trending" onclick="Router.go('trending')">
+      <span class="nav-icon">🔥</span> Trending Now
+      <span class="nav-badge">LIVE</span>
+    </button>
+    <button class="nav-link" data-page="compare" onclick="Router.go('compare')">
+      <span class="nav-icon">⚔️</span> Competitor Compare
+    </button>
+
+    <div class="nav-section">Creator Tools</div>
+    <button class="nav-link" data-page="seo" onclick="Router.go('seo')">
+      <span class="nav-icon">✍️</span> SEO Optimizer
+    </button>
+    <button class="nav-link" data-page="saved" onclick="Router.go('saved')">
+      <span class="nav-icon">💾</span> My Library
+    </button>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="quota-widget">
+      <div class="qw-header">
+        <span>API Quota</span>
+        <span id="quota-pct">0%</span>
+      </div>
+      <div class="qw-bar"><div id="quota-bar"></div></div>
+      <div id="quota-text">0 / 10,000 units used today</div>
+    </div>
+    <button class="api-key-btn" onclick="showKeySettings()">
+      <span>⚙️</span>
+      <span id="key-btn-text">API Key Settings</span>
+    </button>
+  </div>
+</aside>
+
+<!-- Mobile sidebar toggle -->
+<button id="sidebar-toggle" onclick="$('sidebar').classList.toggle('open')" style="display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 12px;color:var(--text);font-size:18px;cursor:pointer">☰</button>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
+<main id="main">
+
+  <!-- DASHBOARD -->
+  <div id="page-dashboard" class="page active"></div>
+
+  <!-- CHANNEL ANALYZER -->
+  <div id="page-channel" class="page"></div>
+
+  <!-- KEYWORD RESEARCH -->
+  <div id="page-keywords" class="page"></div>
+
+  <!-- TRENDING -->
+  <div id="page-trending" class="page"></div>
+
+  <!-- COMPARE -->
+  <div id="page-compare" class="page"></div>
+
+  <!-- SEO OPTIMIZER -->
+  <div id="page-seo" class="page"></div>
+
+  <!-- SAVED / LIBRARY -->
+  <div id="page-saved" class="page"></div>
+
+</main>
+
+<!-- ═══════════ MODAL OVERLAY ═══════════ -->
+<div id="modal-overlay" style="display:none"></div>
+
+<script src="js/core.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/pages.js"></script>
+<script>
+// ─── Bootstrap ───────────────────────────────────
+function setupSaveKey() {
+  const k = ($('setup-key-input')?.value||'').trim();
+  if (!k.startsWith('AIza') || k.length < 30) { Toast.show('Invalid API key format','error'); return; }
+  RankIQ.setKey(k);
+  $('setup-modal').classList.remove('visible');
+  $('key-btn-text').textContent = '✓ API Key Connected';
+  Toast.show('✅ Connected! Welcome to RankIQ','success');
+  Router.go('dashboard');
+}
+
+function showKeySettings() {
+  if (RankIQ.hasKey()) {
+    Modal.open(`
+      <div>
+        <p style="color:var(--text2);font-size:13px;margin-bottom:16px">Your API key is stored securely in your browser's localStorage. It never leaves your device.</p>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <input id="key-update-input" class="form-input" type="password" value="${RankIQ.esc(RankIQ.getKey())}" style="flex:1">
+          <button class="btn-primary" onclick="updateKey()" style="padding:10px 20px">Update</button>
+        </div>
+        <button class="btn-danger" onclick="if(confirm('Remove API key?')){RankIQ.setKey('');Modal.close();$('setup-modal').classList.add('visible')}">Remove Key</button>
+      </div>`, { title: '⚙️ API Key Settings' });
+  } else {
+    $('setup-modal').classList.add('visible');
+  }
+}
+
+function updateKey() {
+  const k = ($('key-update-input')?.value||'').trim();
+  if (!k.startsWith('AIza')) { Toast.show('Invalid key format','error'); return; }
+  RankIQ.setKey(k);
+  Modal.close();
+  Toast.show('✅ API key updated!','success');
+}
+
+// Update quota display
+RankIQ.on('quotaUpdate', (q) => {
+  const el = $('quota-bar');
+  const txt = $('quota-text');
+  const pct = $('quota-pct');
+  if (el) el.style.width = q.pct + '%';
+  if (txt) txt.textContent = `${q.used.toLocaleString()} / 10,000 units used today`;
+  if (pct) pct.textContent = q.pct.toFixed(0) + '%';
+});
+
+// Apply 'is-active' not 'active' for sidebar nav items
+// (Router uses is-active on [data-page] buttons)
+document.querySelectorAll('.nav-link').forEach(btn => {
+  // nav links use data-page to match page name
+});
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { Modal.close(); $('setup-modal').classList.remove('visible'); }
+});
+
+// Connected state
+if (RankIQ.hasKey()) {
+  $('key-btn-text').textContent = '✓ API Key Connected';
+}
+
+// Sidebar toggle show on mobile
+if (window.innerWidth < 768) {
+  $('sidebar-toggle').style.display = 'flex';
+}
+window.addEventListener('resize', () => {
+  $('sidebar-toggle').style.display = window.innerWidth < 768 ? 'flex' : 'none';
+});
+</script>
+</body>
+</html>
+<!-- This file already has closing tags - appending nothing -->
